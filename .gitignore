@@ -10,6 +10,9 @@
 
 # production
 /build
+/firestore.rules
+/firestore.indexes.json
+/database.rules.json
 
 # misc
 .DS_Store
