@@ -1,15 +1,19 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
+/src/firebase
 /node_modules
 /.pnp
 .pnp.js
-
+/functions/serviceAccountKey.json
 # testing
 /coverage
 
 # production
 /build
+/firestore.rules
+/firestore.indexes.json
+/database.rules.json
 
 # misc
 .DS_Store
