@@ -1,0 +1,8 @@
+POST http://localhost:5001/test001-7b413/asia-northeast2/api/users
+Content-Type: application/json
+
+{
+   "name":"Hello",
+   "age":32,
+   "gender":"male"
+}
