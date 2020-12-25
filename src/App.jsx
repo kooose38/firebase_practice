@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { db, FirebaseTimestamp } from "./firebase/index";
 
 
-
 const App = () => {
+   //state
    const
       [data, setData] = useState(),
       [name, setName] = useState(""),
@@ -19,7 +19,24 @@ const App = () => {
    const inputDoc = useCallback((e) => {
       setDocument(e.target.value)
    }, [setDocument]);
-
+   //GET
+   const getHandle = async () => {
+      const prev = [];
+      await db.collection("users").orderBy("created_at", "desc").get().then(snapshots => {
+         snapshots.forEach(doc => {
+            const data = doc.data()
+            const id = doc.id;
+            prev.push({
+               id: id,
+               ...data
+            });
+         })
+         setData(prev);
+      }).catch((e) => {
+         alert(e.message)
+      })
+   };
+   //POST
    const addHandle = async () => {
       const timestamp = FirebaseTimestamp.now()
       const ref = await db.collection("users").doc()
@@ -37,7 +54,7 @@ const App = () => {
          alert(e.message);
       })
    };
-
+   //PUT
    const updatedHandle = async () => {
       const timestamp = FirebaseTimestamp.now();
       if (document === "") {
@@ -59,7 +76,7 @@ const App = () => {
          alert(e.message);
       })
    };
-
+   //DELETE
    const deleteHandle = async () => {
       if (document === "") {
          alert("必須項目です。")
@@ -71,33 +88,30 @@ const App = () => {
          alert(e.message);
       })
    };
-
+   //componentWillUnmount
    useEffect(() => {
-      async function setUp() {
+      const unsubscribe = () => db.collection("users").orderBy("created_at", "asc").onSnapshot((results) => {
          const prev = [];
-         await db.collection("users").orderBy("created_at", "asc").get().then(snapshots => {
-            snapshots.forEach(doc => {
-               const data = doc.data()
-               const uid = doc.id;
-               prev.push({
-                  id: uid,
-                  ...data,
-               });
+         results.forEach(doc => {
+            const data = doc.data()
+            const id = doc.id;
+            prev.push({
+               id: id,
+               ...data
             })
-            setData(prev);
          })
-      }
-      if (!data) {
-         setUp()
-      }
+         setData(prev)
+      })
+      return () => unsubscribe()
    }, []);
 
    return (
-      <div>
+      <div style={{ maxWidth: 800, margin: " 0 auto" }}>
          <h1>
             user list
          </h1>
          <div>
+            <button onClick={getHandle}>リスト表示</button>
             <button onClick={addHandle}>作成</button>
             <button onClick={updatedHandle}>更新</button>
             <button onClick={deleteHandle}>削除</button>
